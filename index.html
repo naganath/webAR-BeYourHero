@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PoseNet - Camera Feed Demo</title>
+    <style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        color: black;
+    }
+
+    .footer-text {
+        max-width: 600px;
+        text-align: center;
+        margin: auto;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .footer-text, .dg {
+        display: none;
+      }
+    }
+    #main
+    {
+        text-align: center;
+        margin: 0 auto;
+    }
+    canvas#output
+    {
+        width: 900px !important;
+        /*display: none !important;*/
+    }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<body>
+
+    <div id="loading">
+        Loading the model...
+    </div>
+
+    <div id='main'>
+        <video id="video" playsinline style=" -moz-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        display: none;
+        ">
+        </video>
+        <canvas id="output" />
+    </div>
+
+    <div class="container">
+      <div class="btn-group btn-group-justified">
+        <a data-id='1' class="costume cosutme-1 btn btn-primary">Costume 1</a>
+        <a data-id='2' class="costume cosutme-2 btn btn-primary">Costume 2</a>
+        <a data-id='3' class="costume cosutme-3 btn btn-primary">Costume 3</a>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.2/build/dat.gui.js"></script>
+    <script src="https://unpkg.com/@tensorflow/tfjs"></script>
+    <script src="https://unpkg.com/@tensorflow-models/posenet"></script>
+    
+    <script src="demo_util.js"></script>
+    <script src="stats.min.js "></script>
+    <script src="camera.js"></script>
+
+
+</body>
+
+</html>
+
