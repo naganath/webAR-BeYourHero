@@ -325,19 +325,19 @@ function detectPoseInRealTime(video, net) {
     //draw Hat snippet end
 
 
-    //draw mask snippet
+    // draw mask snippet
     
-    // var mask_x_factor = 0.5;
-    // var mask_y_factor = 0.5;
-    // var mask_x_adjustment = ( righteye_x - rightear_x ) * mask_x_factor;
-    // var mask_y_adjustment = ( righteye_y - rightear_y ) * mask_y_factor;
-    // var mask_ratio =  mask.height / mask.width;
-    // var mask_x = rightear_x - mask_x_adjustment;
-    // var mask_w = leftear_x - mask_x + mask_x_adjustment;
-    // var mask_h = mask_w * mask_ratio;
-    // var mask_y = nose_y -  ( mask_h + mask_y_adjustment) ;
+    var mask_x_factor = 0.5;
+    var mask_y_factor = 0.5;
+    var mask_x_adjustment = ( righteye_x - rightear_x ) * mask_x_factor;
+    var mask_y_adjustment = ( righteye_y - rightear_y ) * mask_y_factor;
+    var mask_ratio =  mask.height / mask.width;
+    var mask_x = rightear_x - mask_x_adjustment;
+    var mask_w = leftear_x - mask_x + mask_x_adjustment;
+    var mask_h = mask_w * mask_ratio;
+    var mask_y = nose_y -  ( mask_h + mask_y_adjustment) ;
 
-    // ctx.drawImage(mask, mask_x, mask_y, mask_w, mask_h);
+    ctx.drawImage(mask, mask_x, mask_y, mask_w, mask_h);
 
 
     //draw mask snippet end
