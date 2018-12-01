@@ -24,6 +24,7 @@ const canvasSize = document.getElementById('output').width;
 const stats = new Stats();
 var hat = new Image();
 var mask =  new Image();
+var shirt = new Image();
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
 }
@@ -199,6 +200,7 @@ function detectPoseInRealTime(video, net) {
   var position = [];
   hat.src = "img/1/hat.png";
   mask.src = "img/1/mask.png";
+  shirt.src = "img/1/shirt.png";
 
   var prev_deg = 0;
 
@@ -339,9 +341,12 @@ function detectPoseInRealTime(video, net) {
 
     ctx.drawImage(mask, mask_x, mask_y, mask_w, mask_h);
 
-
     //draw mask snippet end
 
+
+    //draw shirt snippet
+    
+    //draw shirt snippet end
 
 
 
