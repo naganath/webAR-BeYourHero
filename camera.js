@@ -24,7 +24,7 @@ const canvasSize = document.getElementById('output').width;
 const stats = new Stats();
 var hat = new Image();
 var mask =  new Image();
-var shirt = new Image();
+var tee = new Image();
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
 }
@@ -200,7 +200,7 @@ function detectPoseInRealTime(video, net) {
   var position = [];
   hat.src = "img/1/hat.png";
   mask.src = "img/1/mask.png";
-  shirt.src = "img/1/shirt.png";
+  tee.src = "img/1/shirt.png";
 
   var prev_deg = 0;
 
@@ -262,6 +262,8 @@ function detectPoseInRealTime(video, net) {
         var leftShoulder = position['leftShoulder'];
         var rightShoulder = position['rightShoulder'];
 
+        var rightHip = position['rightHip'];
+        var leftHip = position['leftHip'];
 
 
         minPoseConfidence = Number(
@@ -295,12 +297,21 @@ function detectPoseInRealTime(video, net) {
 
     //draw Hat snippet
 
-    var x = (righteye_x+rightear_x)/2;
+    //draw tee snippet
+    const y = 'y';
+    const x = 'x';
+    var tee_ratio = tee.height / tee.width;
+    var tee_x = rightShoulder[x] ;
+    var tee_y_adj =  ( rightShoulder[y]  - nose_y )  / 2
+    var tee_w = leftShoulder[x] - rightShoulder[x];
+    var tee_h = rightHip[y] - rightShoulder[y] + tee_y_adj;
+    var tee_y =  rightShoulder[y]  - tee_y_adj; 
+    ctx.drawImage(tee, tee_x, tee_y, tee_w, tee_h);
+
+
     var width_x = (lefteye_x+leftear_x)/2;
     var factor = hat.height/hat.width;
     var imag_h = ((leftear_x - rightear_x)*factor);
-
-
     var theme1_hat_x_factor = 1.5;
     var theme1_hat_y_factor = 0.75;
 
@@ -318,12 +329,7 @@ function detectPoseInRealTime(video, net) {
     var neck_y = (nose_y +  shoulder_y_mid )/ 2;
     var neck_x = (leftShoulder['x'] + rightShoulder['x']) /2 ;
 
-    ctx.save();
-    ctx.translate(neck_x, neck_y);
-    ctx.rotate(deg*Math.PI/180);
-    ctx.drawImage(hat, hat_x - neck_x, hat_y - neck_y, hat_w, hat_h);
-    ctx.restore();
-
+    
     //draw Hat snippet end
 
 
@@ -339,14 +345,23 @@ function detectPoseInRealTime(video, net) {
     var mask_h = mask_w * mask_ratio;
     var mask_y = nose_y -  ( mask_h + mask_y_adjustment) ;
 
+    // todo give angle to eye mask like hat. 
     ctx.drawImage(mask, mask_x, mask_y, mask_w, mask_h);
+
+
+    ctx.save();
+    ctx.translate(neck_x, neck_y);
+    ctx.rotate(deg*Math.PI/180);
+    ctx.drawImage(hat, hat_x - neck_x, hat_y - neck_y, hat_w, hat_h);
+    ctx.restore();
+
 
     //draw mask snippet end
 
 
-    //draw shirt snippet
     
-    //draw shirt snippet end
+
+    //draw tee snippet end
 
 
 
