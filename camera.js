@@ -25,6 +25,7 @@ const stats = new Stats();
 var hat = new Image();
 var mask =  new Image();
 var tee = new Image();
+var leftgloves = new Image();
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
 }
@@ -100,6 +101,15 @@ const guiState = {
   },
   net: null,
 };
+
+
+function loadImages() {
+  hat.src = "img/1/hat.png";
+  mask.src = "img/1/mask.png";
+  tee.src = "img/1/shirt.png";
+  leftgloves.src = "img/1/gloves.png"
+
+}
 
 /**
  * Sets up dat.gui controller on the top-right of the window
@@ -198,11 +208,7 @@ function detectPoseInRealTime(video, net) {
   const flipHorizontal = true; // since images are being fed from a webcam
 
   var position = [];
-  hat.src = "img/1/hat.png";
-  mask.src = "img/1/mask.png";
-  tee.src = "img/1/shirt.png";
-
-  var prev_deg = 0;
+  loadImages();
 
   canvas.width = canvasSize;
   canvas.height = canvasSize;
@@ -265,6 +271,9 @@ function detectPoseInRealTime(video, net) {
         var rightHip = position['rightHip'];
         var leftHip = position['leftHip'];
 
+        var leftElbow = position['leftElbow'];
+        var leftWrist = position['leftWrist'];
+
 
         minPoseConfidence = Number(
           guiState.singlePoseDetection.minPoseConfidence);
@@ -292,14 +301,37 @@ function detectPoseInRealTime(video, net) {
       ctx.drawImage(video, 0, 0, canvasSize, canvasSize);
       ctx.restore();
     }
-    
 
-
-    //draw Hat snippet
-
-    //draw tee snippet
+       /*
+    ####################################    Constants    ####################################
+    */
+ 
     const y = 'y';
     const x = 'x';
+    
+   /*
+    ####################################    Draw Left Gloves    ####################################
+    */
+ 
+    var leftgloves_w_fac = 3;
+    var leftgloves_h_fac = 1.5;
+    var leftgloves_x_adj = lefteye_x - righteye_x ;
+    var leftgloves_x = leftElbow[x]  - leftgloves_x_adj;
+    var leftgloves_y = leftElbow[y];
+    var leftgloves_w = leftgloves_x_adj * leftgloves_w_fac;
+    var leftgloves_h = ( leftWrist[y] - leftElbow[y] )  * leftgloves_h_fac;
+    ctx.drawImage(leftgloves, leftgloves_x, leftgloves_y, leftgloves_w, leftgloves_h);
+
+
+
+
+
+
+
+
+    /*
+    ####################################    Draw TEE    ####################################
+    */
     var tee_ratio = tee.height / tee.width;
     var tee_x = rightShoulder[x] ;
     var tee_y_adj =  ( rightShoulder[y]  - nose_y )  / 2
@@ -309,45 +341,48 @@ function detectPoseInRealTime(video, net) {
     ctx.drawImage(tee, tee_x, tee_y, tee_w, tee_h);
 
 
-    var width_x = (lefteye_x+leftear_x)/2;
+    /*
+    ####################################    Draw MASK    ####################################
+    */
+    
+    var mask_x_factor = 0.5;
+    var mask_y_factor = 0.45;
+    var mask_x_adjustment = ( righteye_x - rightear_x ) * mask_x_factor;
+    var mask_y_adjustment = ( righteye_y - nose_y ) * mask_y_factor;
+    var mask_ratio =  mask.height / mask.width;
+    var mask_x = rightear_x - mask_x_adjustment;
+    var mask_w = leftear_x - mask_x + mask_x_adjustment;
+    var mask_h = mask_w * mask_ratio;
+    var mask_y = nose_y -  ( mask_h + mask_y_adjustment) ;
+    // todo give angle to eye mask like hat. 
+    // ---------------------------------------------------------------------------------------
+
+    ctx.drawImage(mask, mask_x, mask_y, mask_w, mask_h);
+
+
+
+    /*
+    ####################################    Draw HAT    ####################################
+    */
+
     var factor = hat.height/hat.width;
-    var imag_h = ((leftear_x - rightear_x)*factor);
     var theme1_hat_x_factor = 1.5;
     var theme1_hat_y_factor = 0.75;
 
     var slope =(lefteye_y - righteye_y)/ (lefteye_x - righteye_x)  ;
     var deg = Math.atan(slope) *180/Math.PI;
 
-    var deg_new = deg - prev_deg;
-    prev_deg = deg;
     var hat_x = rightear_x - ( righteye_x - rightear_x ) * theme1_hat_x_factor;
     var hat_w =   leftear_x -hat_x + ( righteye_x - rightear_x ) * theme1_hat_x_factor;
     var hat_h = hat_w * factor;
     var hat_y = righteye_y-(theme1_hat_y_factor* (nose_y - righteye_y) + hat_h) ; 
     
+
+    // ---------------------------------------------------------------------------------------
+
     var shoulder_y_mid = (leftShoulder['y'] + rightShoulder['y'])/2;
     var neck_y = (nose_y +  shoulder_y_mid )/ 2;
     var neck_x = (leftShoulder['x'] + rightShoulder['x']) /2 ;
-
-    
-    //draw Hat snippet end
-
-
-    // draw mask snippet
-    
-    var mask_x_factor = 0.5;
-    var mask_y_factor = 0.5;
-    var mask_x_adjustment = ( righteye_x - rightear_x ) * mask_x_factor;
-    var mask_y_adjustment = ( righteye_y - rightear_y ) * mask_y_factor;
-    var mask_ratio =  mask.height / mask.width;
-    var mask_x = rightear_x - mask_x_adjustment;
-    var mask_w = leftear_x - mask_x + mask_x_adjustment;
-    var mask_h = mask_w * mask_ratio;
-    var mask_y = nose_y -  ( mask_h + mask_y_adjustment) ;
-
-    // todo give angle to eye mask like hat. 
-    ctx.drawImage(mask, mask_x, mask_y, mask_w, mask_h);
-
 
     ctx.save();
     ctx.translate(neck_x, neck_y);
@@ -356,14 +391,10 @@ function detectPoseInRealTime(video, net) {
     ctx.restore();
 
 
-    //draw mask snippet end
+    /*
+############################################################################################
 
-
-    
-
-    //draw tee snippet end
-
-
+    */
 
     const scale = canvasSize / video.width;
 
@@ -401,6 +432,13 @@ console.log("success");
 });
 
 
+
+function generateHat(hatImg, position) {
+
+
+
+  // body...
+}
 
 async function bindPage() {
   // Load the PoseNet model weights for version 1.01
