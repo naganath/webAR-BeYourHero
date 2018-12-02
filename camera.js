@@ -28,6 +28,9 @@ var hat = new Image();
 var mask =  new Image();
 var tee = new Image();
 var leftBiceps = new Image();
+var rightBiceps = new Image();
+var rightPant = new Image();
+var leftPant = new Image();
 
 
 //------------------------------------------------------------------------
@@ -110,9 +113,12 @@ const guiState = {
 
 function loadImages() {
   hat.src = "img/1/hat.png";
-  mask.src = "img/1/mask.png";
-  tee.src = "img/1/shirt.png";
-  leftBiceps.src = "img/1/arm.png";
+  mask.src = "img/1/mask-1.png";
+  tee.src = "img/1/shirt-1.png";
+  leftBiceps.src = "img/1/leftArm.png";
+  rightBiceps.src = "img/1/rightArm.png"; 
+  rightPant.src = "img/1/rightPant.png";
+  leftPant.src = "img/1/leftPant.png";
 
 
 }
@@ -278,7 +284,10 @@ function detectPoseInRealTime(video, net) {
         var leftHip = position['leftHip'];
 
         var leftElbow = position['leftElbow'];
-        var leftWrist = position['leftWrist'];        
+        var rightElbow = position['rightElbow'];    
+
+        var leftKnee = position["leftKnee"];
+        var rightKnee = position["rightKnee"];    
 
         minPoseConfidence = Number(
           guiState.singlePoseDetection.minPoseConfidence);
@@ -314,7 +323,45 @@ function detectPoseInRealTime(video, net) {
       x : (leftShoulder[x] + rightShoulder[x] ) / 2,
       y : (leftShoulder[y] + rightShoulder[y] ) /2
     };
-   
+
+    var midHip = { 
+      x : (rightHip[x] + leftHip[x])/2,
+      y : (rightHip[y] + leftHip[y])/2
+    }
+
+     /*
+    ####################################    Draw Right Arm    ####################################
+    */
+    
+    var rightArm_slope = ( rightShoulder[y] - rightElbow[y] ) / ( rightShoulder[x] - rightElbow[x] );
+    var rightArm_deg =  Math.atan(rightArm_slope) *180/Math.PI;
+    var rightArm_degDelta = (rightArm_deg / -6) ; 
+
+    if((rightArm_deg < 0)) 
+        rightArm_degDelta = rightArm_deg/2;
+
+
+    var rightArm_w_fac = 1.1;
+    var rightArm_y_fac = 1;
+    var rightArm_x_fac = 2;
+    var rightArm_x_adj = neck[x] - rightShoulder[x]  ; 
+    var rightArm_x = rightShoulder[x] + rightArm_x_adj / rightArm_x_fac ;
+
+    var rightArmDist = Math.sqrt( Math.pow(rightShoulder[x] - rightElbow[x] , 2) + Math.pow(rightShoulder[y] - rightElbow[y], 2));
+    var rightArm_y_adj = (rightShoulder[y] - neck[y])/ rightArm_y_fac;
+    var rightArm_y = rightShoulder[y] - rightArm_y_adj;
+    var rightArm_w =  armPivot[x] * rightArm_w_fac - rightShoulder[x] ;
+    var rightArm_h =   rightArmDist + rightArm_y_adj * 1.5;
+
+    // ctx.drawImage(rightBiceps, rightArm_x, rightArm_y, rightArm_w, rightArm_h);
+
+    console.log(" calculated angle " + rightArm_deg)
+    ctx.save();    
+    ctx.translate(rightShoulder[x], rightShoulder[y]);
+    ctx.rotate(((rightArm_deg + 90) + rightArm_degDelta)*Math.PI/180);
+    ctx.drawImage(rightBiceps, rightArm_x - rightShoulder[x] , rightArm_y - rightShoulder[y], -rightArm_w, rightArm_h);
+    ctx.restore();
+ 
     /*
     ####################################    Draw Left Arm    ####################################
     */
@@ -326,14 +373,11 @@ function detectPoseInRealTime(video, net) {
     if((leftArm_deg < 0)) 
         leftArm_degDelta = leftArm_deg/-2;
 
-
     var leftArm_w_fac = 0.9;
     var leftArm_y_fac = 1;
     var leftArm_x_fac = 2;
     var leftArm_x_adj = leftShoulder[x] - neck[x] ; 
     var leftArm_x = leftShoulder[x] - leftArm_x_adj / leftArm_x_fac ;
-    var leftArm_factor = leftBiceps.height / leftBiceps.width;
-    // - leftArm_x_adj / leftArm_x_fac;     x w h y 
 
     var leftArmDist = Math.sqrt( Math.pow(leftShoulder[x] - leftElbow[x] , 2) + Math.pow(leftShoulder[y] - leftElbow[y], 2));
     var leftArm_y_adj = (leftShoulder[y] - neck[y]  )/ leftArm_y_fac;
@@ -343,6 +387,7 @@ function detectPoseInRealTime(video, net) {
 
     // ctx.drawImage(leftBiceps, leftArm_x, leftArm_y, leftArm_w, leftArm_h);
 
+
     console.log(" calculated angle " + leftArm_deg)
     ctx.save();    
     ctx.translate(leftShoulder[x], leftShoulder[y]);
@@ -351,13 +396,40 @@ function detectPoseInRealTime(video, net) {
     ctx.restore();
 
 
+    
+
 
    /*
-    ####################################    Draw Left Gloves    ####################################
+    ####################################    Draw  Pant    ####################################
     */
     
-     
- 
+    var rightPant_slope = (rightKnee[y] - rightHip[y]) / (rightKnee[x] - rightHip[x]) ;
+    var rightPant_deg = -Math.abs( Math.atan(rightPant_slope)  *180/Math.PI);
+    rightPant_deg =  rightPant_deg  - 10;
+    var rightPant_dist = Math.sqrt( Math.pow(rightKnee[x] - rightHip[x] , 2) + Math.pow(rightKnee[y] - rightHip[y], 2));
+    var rightPant_x_adj = ((midHip[x] - rightHip[x] ) + ( leftHip[x] - midHip[x] ) )/2;
+    var rightPant_x = rightShoulder[x]  - rightPant_x_adj;
+    rightPant_x = rightPant_x < rightShoulder[x] ? rightPant_x : rightShoulder[x]* 0.9;
+    var rightPant_y =  midHip[y] *0.95;
+    var rightPant_w = midHip[x] -  rightPant_x;
+    var rightPant_h = rightPant_dist * 1.1;
+    
+
+
+
+    var leftPant_slope = (leftKnee[y] - leftHip[y]) / (leftKnee[x] - leftHip[x]) ;
+    var leftPant_deg = Math.abs( Math.atan(leftPant_slope)  *180/Math.PI);
+    leftPant_deg =  leftPant_deg  + 10;
+    var leftPant_dist = Math.sqrt( Math.pow(leftKnee[x] - leftHip[x] , 2) + Math.pow(leftKnee[y] - leftHip[y], 2));
+    // var rightPant_x_adj = ((midHip[x] - rightHip[x] ) + ( leftHip[x] - midHip[x] ) )/2;
+    var leftPant_x =   midHip[x] ;
+    // rightShoulder[x]  - rightPant_x_adj;
+    leftPant_x = leftPant_x < armPivot[x] ? leftPant_x : armPivot[x];
+    // * 0.9;
+    var leftPant_y =  midHip[y] *0.95;
+    var leftPant_w =  leftShoulder[x]  + rightPant_x_adj - leftPant_x;
+    var leftPant_h = leftPant_dist * 1.1;
+    
     
 
     
@@ -369,23 +441,39 @@ function detectPoseInRealTime(video, net) {
     /*
     ####################################    Draw TEE    ####################################
     */
-    var tee_ratio = tee.height / tee.width;
-    var tee_x = rightShoulder[x] ;
+    var tee_x_adj = (neck[x] - rightShoulder[x] ) /3;
+    var tee_x = rightShoulder[x]  - tee_x_adj;
     var tee_y_adj =  ( rightShoulder[y]  - nose_y )  / 2
-    var tee_w = leftShoulder[x] - rightShoulder[x];
-    var tee_h = rightHip[y] - rightShoulder[y] + tee_y_adj;
+    var tee_w = leftShoulder[x] - rightShoulder[x] + tee_x_adj * 2;
+    var tee_h = rightHip[y] - rightShoulder[y] + tee_y_adj ;
     var tee_y =  rightShoulder[y]  - tee_y_adj; 
-    ctx.drawImage(tee, tee_x, tee_y, tee_w, tee_h);
+  
+    ctx.drawImage(tee, tee_x, tee_y *1.05, tee_w, tee_h);
+
+
+
+    ctx.save();
+    ctx.translate(rightHip[x], rightHip[y]);
+    ctx.rotate((rightPant_deg+90)*Math.PI/180);
+    ctx.drawImage(rightPant, rightPant_x - rightHip[x], rightPant_y - rightHip[y], rightPant_w, rightPant_h);
+    ctx.restore();
+
+
+    ctx.save();
+    ctx.translate(leftHip[x], leftHip[y]);
+    ctx.rotate((leftPant_deg-90)*Math.PI/180);
+    ctx.drawImage(leftPant, leftPant_x - leftHip[x], leftPant_y - leftHip[y], leftPant_w, leftPant_h);
+    ctx.restore();
 
 
     /*
     ####################################    Draw MASK    ####################################
     */
     
-    var mask_x_factor = 0.5;
-    var mask_y_factor = 0.45;
+    var mask_x_factor = 0.25;
+    var mask_y_factor = 0;
     var mask_x_adjustment = ( righteye_x - rightear_x ) * mask_x_factor;
-    var mask_y_adjustment = ( righteye_y - nose_y ) * mask_y_factor;
+    var mask_y_adjustment = ( nose_y - (righteye_y  + lefteye_y)/2   ) * mask_y_factor;
     var mask_ratio =  mask.height / mask.width;
     var mask_x = rightear_x - mask_x_adjustment;
     var mask_w = leftear_x - mask_x + mask_x_adjustment;
@@ -394,7 +482,7 @@ function detectPoseInRealTime(video, net) {
     // todo give angle to eye mask like hat. 
     // ---------------------------------------------------------------------------------------
 
-    ctx.drawImage(mask, mask_x, mask_y, mask_w, mask_h);
+    
 
 
 
@@ -403,24 +491,26 @@ function detectPoseInRealTime(video, net) {
     */
 
     var factor = hat.height/hat.width;
-    var theme1_hat_x_factor = 1.5;
+    var theme1_hat_x_factor = 2;
     var theme1_hat_y_factor = 0.75;
 
-    var hat_slope =(lefteye_y - righteye_y)/ (lefteye_x - righteye_x)  ;
-    var hat_deg = Math.atan(hat_slope) *180/Math.PI;
+    var head_slope =(lefteye_y - righteye_y)/ (lefteye_x - righteye_x)  ;
+    var head_deg = Math.atan(head_slope) *180/Math.PI;
 
-    var hat_x = rightear_x - ( righteye_x - rightear_x ) * theme1_hat_x_factor;
-    var hat_w =   leftear_x -hat_x + ( righteye_x - rightear_x ) * theme1_hat_x_factor;
+    var hat_adj_x = ( (righteye_x - rightear_x) + (leftear_x  - lefteye_x) ) /2;
+    var hat_adj_x = ( (nose_x - righteye_x) + (lefteye_x - nose_x) ) /2;
+    var hat_x = rightear_x - hat_adj_x * theme1_hat_x_factor;
+    var hat_w =   leftear_x -hat_x + hat_adj_x * theme1_hat_x_factor;
     var hat_h = hat_w * factor;
     var hat_y = righteye_y-(theme1_hat_y_factor* (nose_y - righteye_y) + hat_h) ; 
     
-
     // ---------------------------------------------------------------------------------------
 
     
     ctx.save();
     ctx.translate(neck[x], neck[y]);
-    ctx.rotate(hat_deg*Math.PI/180);
+    ctx.rotate(head_deg*Math.PI/180);
+    ctx.drawImage(mask, mask_x - neck[x], mask_y  - neck[y], mask_w, mask_h);
     ctx.drawImage(hat, hat_x - neck[x], hat_y - neck[y], hat_w, hat_h);
     ctx.restore();
 
