@@ -38,6 +38,11 @@ var costume_2 = {
   "hat_x_factor" : 3.5
 };
 
+var costume_3 = {
+  "hat_y_factor" : 0.5,
+  "hat_x_factor" : 2
+}
+
 
 //-------------------------------- COSTUME 3 Parameters  -----------------------------------------------
 
@@ -508,7 +513,8 @@ function detectPoseInRealTime(video, net) {
     var hat_adj_x = ( (righteye_x - rightear_x) + (leftear_x  - lefteye_x) ) /2;
     var hat_adj_x = ( (nose_x - righteye_x) + (lefteye_x - nose_x) ) /2;
     if(costumeParams != undefined) {
-      hat_x_factor = costumeParams["hat_x_factor"] ;
+      hat_x_factor = costumeParams["hat_x_factor"]  != undefined ?  costumeParams["hat_x_factor"]: hat_x_factor ;
+      hat_y_factor = costumeParams["hat_y_factor"]  != undefined ?  costumeParams["hat_y_factor"]: hat_y_factor ;
     }
 
 
