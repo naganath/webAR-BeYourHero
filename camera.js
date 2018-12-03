@@ -35,7 +35,10 @@ const minScore = 0.35;
 var costumeParams = undefined;
 //-------------------------------- COSTUME 2 Parameters  -----------------------------------------------
 var costume_2 = {
-  "hat_x_factor" : 3.5
+  "hat_x_factor" : 1,
+  "hat_y_factor" : 1,
+  "factor_adj" : 0.75
+
 };
 
 var costume_3 = {
@@ -508,6 +511,7 @@ function detectPoseInRealTime(video, net) {
     var factor = hat.height/hat.width;
     var hat_x_factor = 2.5;
     var hat_y_factor = 0;
+    var factor_adj = 1;
 
     var head_slope =(leftEye[y] - rightEye[y])/ (leftEye[x] - rightEye[x])  ;
     var head_deg = Math.atan(head_slope) *180/Math.PI;
@@ -517,12 +521,13 @@ function detectPoseInRealTime(video, net) {
     if(costumeParams != undefined) {
       hat_x_factor = costumeParams["hat_x_factor"]  != undefined ?  costumeParams["hat_x_factor"]: hat_x_factor ;
       hat_y_factor = costumeParams["hat_y_factor"]  != undefined ?  costumeParams["hat_y_factor"]: hat_y_factor ;
+      factor_adj = costumeParams["factor_adj"]  != undefined ?  costumeParams["factor_adj"]: factor_adj ;
     }
 
 
     var hat_x = rightEar[x] - hat_adj_x * hat_x_factor;
     var hat_w =   leftEar[x] -hat_x + hat_adj_x * hat_x_factor;
-    var hat_h = hat_w * factor;
+    var hat_h = hat_w * factor * factor_adj;
     var hat_y = rightEye[y]-(hat_y_factor* (nose[y] - rightEye[y]) + hat_h) ; 
     
     // ---------------------------------------------------------------------------------------
