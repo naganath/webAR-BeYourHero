@@ -335,24 +335,24 @@ function detectPoseInRealTime(video, net) {
     //draw canvas button images 
 
     ctx.drawImage(sound, 5, 150, 25, 25);
-    ctx.drawImage(rain, 35, 150, 25, 25);
-    ctx.drawImage(tree, 70, 150, 25, 25);
+    ctx.drawImage(rain, 5, 180, 25, 25);
+    ctx.drawImage(tree, 5, 210, 25, 25);
 
 
     // console.log(rightwrist_x+'---'+rightwrist_y);
 
-    if( (rightwrist_x > 0 && rightwrist_x < 28) && (rightwrist_y > 149 && rightwrist_y < 170) )
+    if( (rightwrist_x > 0 && rightwrist_x < 27) && (rightwrist_y > 149 && rightwrist_y < 170) )
     {
         jQuery("body").find('#myaudio').get(0).play();
     } 
 
-    if( (rightwrist_x > 30 && rightwrist_x < 65) && (rightwrist_y > 149 && rightwrist_y < 170) )
+    if( (rightwrist_x > 0 && rightwrist_x < 27) && (rightwrist_y > 175 && rightwrist_y < 210) )
     {
       jQuery(".rain-bg").removeClass('hide');
       jQuery(".tree-bg").addClass('hide');
     }
 
-    if( (rightwrist_x > 70 && rightwrist_x < 105) && (rightwrist_y > 149 && rightwrist_y < 170) )
+    if( (rightwrist_x > 0 && rightwrist_x < 27) && (rightwrist_y > 215 && rightwrist_y < 240) )
     {
       jQuery(".tree-bg").removeClass('hide');
       jQuery(".rain-bg").addClass('hide');
@@ -683,45 +683,50 @@ function detectPoseInRealTime(video, net) {
 
        }
 
-
-
-
-
-
       // delete old Keys.
       timeMap.delete(curTimeIn10Millis - gestureTime);
 
       if(isGesture1)
       {
-          jQuery(".video-div").removeClass("hide"); 
-          jQuery("body").find('#myvideo').get(0).play();
+          if(jQuery(".girl-bg").hasClass('hide')) {
+              jQuery(".video-div").removeClass("hide"); 
+              jQuery("body").find('#myvideo').get(0).play();
+        }
       }
-      else
-      {
-          jQuery(".video-div").addClass("hide"); 
-          jQuery("body").find('#myvideo').get(0).pause();
-      }
-
 
       if(isGesture2)
       {
-          jQuery(".girl-bg").removeClass('hide');
-          jQuery(".girl-bg").animate({left: '500px'} ,{duration:3500});
-      }
-      else
-      {
-          jQuery(".girl-bg").addClass('hide');
-          jQuery(".girl-bg").animate({left: '0px'});
-      }
 
-      if(isGesture3)
-      {
-             var theme = Math.floor(Math.random() * 3);
-             theme+=1;
-             jQuery(".costume-"+theme).click();
+           if(jQuery(".video-div").hasClass('hide')) {
+                jQuery(".girl-bg").removeClass('hide');
+                jQuery(".girl-bg").stop();
+                jQuery(".girl-bg").animate({left: '500px'} ,{duration:1000});
+        }
       }
 
       if(isGesture4)
+      {
+             var theme = Math.floor(Math.random() * 3);
+             theme+=1;
+
+             var lastUpdated = timeMap.get("costume");
+             if(lastUpdated != undefined ) {
+                var d = new Date();
+                var curT = Math.trunc (d.getTime()/10);
+                if( curT - lastUpdated >  gestureTime *2 ) {
+                           jQuery(".costume-"+theme).click();                  
+                           timeMap.set("costume", curT);
+                }
+
+             } else {
+                    jQuery(".costume-"+theme).click();                  
+                    timeMap.set("costume", curT);
+
+             }
+
+      }
+
+      if(isGesture3)
       {
             hat.src = '';
             mask.src = '';
@@ -736,6 +741,12 @@ function detectPoseInRealTime(video, net) {
       {
           jQuery(".tree-bg").addClass('hide');
           jQuery(".rain-bg").addClass('hide');
+          jQuery("body").find('#myaudio').get(0).pause();
+          jQuery(".video-div").addClass("hide"); 
+          jQuery("body").find('#myvideo').get(0).pause();
+          jQuery(".girl-bg").addClass('hide');
+          jQuery(".girl-bg").stop();
+          jQuery(".girl-bg").animate({left: '0px'} ,{duration:1000});
       }  
 
 

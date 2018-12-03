@@ -66,7 +66,7 @@
 
 .main {
     font-size: 28px; /* Increased text to enable scrolling */
-    padding: 0px 10px;
+    padding: 30px 10px;
 }
 
 #loading
@@ -200,8 +200,9 @@
 
 
     <script type="text/javascript"> 
-
+    var theme_number=0;
      jQuery(".costume").click(function(){
+        theme_number = jQuery(this).attr('data-id');
         jQuery("body").find('#myaudio').get(0).play();
         jQuery("body").find('#myaudio').get(0).pause();
         jQuery("body").find('#myvideo').get(0).play();
