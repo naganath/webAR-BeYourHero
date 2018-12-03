@@ -31,7 +31,7 @@ var leftBiceps = new Image();
 var rightBiceps = new Image();
 var rightPant = new Image();
 var leftPant = new Image();
-
+const minScore = 0.35;
 var costumeParams = undefined;
 //-------------------------------- COSTUME 2 Parameters  -----------------------------------------------
 var costume_2 = {
@@ -360,7 +360,7 @@ function detectPoseInRealTime(video, net) {
     var rightArm_h =   rightArmDist + rightArm_y_adj * 1.5;
 
     // ctx.drawImage(rightBiceps, rightArm_x, rightArm_y, rightArm_w, rightArm_h);
-     if(rightShoulder[score] > 0.25 && rightElbow[score] > 0.25 && leftShoulder[score] > 0.25 && nose[score] > 0.25) {
+     if(rightShoulder[score] > minScore && rightElbow[score] > minScore && leftShoulder[score] > minScore && nose[score] > minScore) {
     
         console.log(" calculated angle " + rightArm_deg)
         ctx.save();    
@@ -395,7 +395,7 @@ function detectPoseInRealTime(video, net) {
 
     // ctx.drawImage(leftBiceps, leftArm_x, leftArm_y, leftArm_w, leftArm_h);
 
-    if(leftShoulder[score] > 0.25 && leftElbow[score] > 0.25 && rightShoulder[score] > 0.25 && nose[score] > 0.25) {
+    if(leftShoulder[score] > minScore && leftElbow[score] > minScore && rightShoulder[score] > minScore && nose[score] > minScore) {
 
         console.log(" calculated angle " + leftArm_deg)
         ctx.save();    
@@ -458,12 +458,12 @@ function detectPoseInRealTime(video, net) {
     var tee_h = rightHip[y] - rightShoulder[y] + tee_y_adj ;
     var tee_y =  rightShoulder[y]  - tee_y_adj; 
   
-    if(rightHip[score] > 0.25 && leftHip[score] > 0.25 && rightShoulder[score] > 0.25 && leftShoulder[score] > 0.25  ) 
+    if(rightHip[score] > minScore && leftHip[score] > minScore && rightShoulder[score] > minScore && leftShoulder[score] > minScore  ) 
         ctx.drawImage(tee, tee_x, tee_y *1.05, tee_w, tee_h);
 
 
-    if(rightHip[score] > 0.25 && leftHip[score] > 0.25 && rightKnee[score] > 0.25 && leftKnee[score] > 0.25 
-        && rightShoulder[score] > 0.25 && leftShoulder[score] > 0.25  ) {
+    if(rightHip[score] > minScore && leftHip[score] > minScore && rightKnee[score] > minScore && leftKnee[score] > minScore 
+        && rightShoulder[score] > minScore && leftShoulder[score] > minScore  ) {
 
       ctx.save();
       ctx.translate(rightHip[x], rightHip[y]);
@@ -527,7 +527,7 @@ function detectPoseInRealTime(video, net) {
 
 
 
-    if(nose[score] > 0.25 && leftEye[score] > 0.25 && leftEar[score] > 0.25 && rightEye[score] > 0.25 && rightEye[score] > 0.25 ) {
+    if(nose[score] > minScore && leftEye[score] > minScore && leftEar[score] > minScore && rightEye[score] > minScore && rightEye[score] > minScore ) {
       ctx.save();
       ctx.translate(neck[x], neck[y]);
       ctx.rotate(head_deg*Math.PI/180);
