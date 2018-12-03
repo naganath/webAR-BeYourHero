@@ -558,6 +558,8 @@ function detectPoseInRealTime(video, net) {
       timeMap.set(curTimeIn10Millis, position);
       var oldPosition = timeMap.get(curTimeIn10Millis - 100  );
 
+      var gestureTime = 100 *4 ; //  No. of seconds.  
+
       // Gesture 1 rightEar -- rightWrist
       var isGesture1 = false;
       var isGesture2 = false;
@@ -641,7 +643,7 @@ function detectPoseInRealTime(video, net) {
 
 
       // delete old Keys.
-      timeMap.delete(curTimeIn10Millis-200);
+      timeMap.delete(curTimeIn10Millis - gestureTime);
 
 
 
