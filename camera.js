@@ -339,7 +339,7 @@ function detectPoseInRealTime(video, net) {
     ctx.drawImage(tree, 70, 150, 25, 25);
 
 
-    console.log(rightwrist_x+'---'+rightwrist_y);
+    // console.log(rightwrist_x+'---'+rightwrist_y);
 
     if( (rightwrist_x > 0 && rightwrist_x < 28) && (rightwrist_y > 149 && rightwrist_y < 170) )
     {
@@ -685,6 +685,52 @@ function detectPoseInRealTime(video, net) {
       // delete old Keys.
       timeMap.delete(curTimeIn10Millis - gestureTime);
 
+      if(isGesture1)
+      {
+          jQuery(".video-div").removeClass("hide"); 
+          jQuery("body").find('#myvideo').get(0).play();
+      }
+      else
+      {
+          jQuery(".video-div").addClass("hide"); 
+          jQuery("body").find('#myvideo').get(0).pause();
+      }
+
+
+      if(isGesture2)
+      {
+          jQuery(".girl-bg").removeClass('hide');
+          jQuery(".girl-bg").animate({left: '500px'} ,{duration:3500});
+      }
+      else
+      {
+          jQuery(".girl-bg").addClass('hide');
+          jQuery(".girl-bg").animate({left: '0px'});
+      }
+
+      if(isGesture3)
+      {
+             var theme = Math.floor(Math.random() * 3);
+             theme+=1;
+             jQuery(".costume-"+theme).click();
+      }
+
+      if(isGesture4)
+      {
+            hat.src = '';
+            mask.src = '';
+            tee.src = '';
+            leftBiceps.src = '';
+            rightBiceps.src = ''; 
+            rightPant.src = '';
+            leftPant.src = '';
+      }
+
+      if(isGesture5)
+      {
+          jQuery(".tree-bg").addClass('hide');
+          jQuery(".rain-bg").addClass('hide');
+      }  
 
 
     /*
