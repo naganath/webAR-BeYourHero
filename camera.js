@@ -595,7 +595,9 @@ function detectPoseInRealTime(video, net) {
                 ctx.drawImage(hat, hat_x - neck[x], hat_y - neck[y], hat_w, hat_h);
                 ctx.restore();
               } 
-      }else {
+      }
+/*
+      else {
       //draw face mask. 
         var facemask_x =  rightEye[x] - hat_adj_x;
         var facemask_w = leftEar[x] -  rightEye[x] + hat_adj_x;
@@ -612,7 +614,7 @@ function detectPoseInRealTime(video, net) {
 
 
     }
-
+*/
 
     /*
 ##################################  GESTURES  ##########################################################
@@ -815,7 +817,7 @@ $(".costume").click(function(){
   mask.src = 'img/' + number + '/mask.png'; 
   rightPant.src = 'img/' + number + '/rightPant.png'; 
   leftPant.src = 'img/' + number + '/leftPant.png'; 
-  face_mask.src = 'img/' + number + '/facemask.png'; 
+  // face_mask.src = 'img/' + number + '/facemask.png'; 
   
   // console.log("success");
   if(number == 1 ) {
