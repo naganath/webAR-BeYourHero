@@ -360,7 +360,8 @@ function detectPoseInRealTime(video, net) {
     var rightArm_h =   rightArmDist + rightArm_y_adj * 1.5;
 
     // ctx.drawImage(rightBiceps, rightArm_x, rightArm_y, rightArm_w, rightArm_h);
-     if(rightShoulder[score] > minScore && rightElbow[score] > minScore && leftShoulder[score] > minScore && nose[score] > minScore) {
+     if(rightShoulder[score] > minScore && rightElbow[score] > minScore && leftShoulder[score] > minScore && nose[score] > minScore
+          && nose[score] > minScore) {
     
         console.log(" calculated angle " + rightArm_deg)
         ctx.save();    
@@ -395,7 +396,8 @@ function detectPoseInRealTime(video, net) {
 
     // ctx.drawImage(leftBiceps, leftArm_x, leftArm_y, leftArm_w, leftArm_h);
 
-    if(leftShoulder[score] > minScore && leftElbow[score] > minScore && rightShoulder[score] > minScore && nose[score] > minScore) {
+    if(leftShoulder[score] > minScore && leftElbow[score] > minScore && rightShoulder[score] > minScore && nose[score] > minScore
+        && nose[score] > minScore) {
 
         console.log(" calculated angle " + leftArm_deg)
         ctx.save();    
@@ -463,7 +465,7 @@ function detectPoseInRealTime(video, net) {
 
 
     if(rightHip[score] > minScore && leftHip[score] > minScore && rightKnee[score] > minScore && leftKnee[score] > minScore 
-        && rightShoulder[score] > minScore && leftShoulder[score] > minScore  ) {
+        && rightShoulder[score] > minScore && leftShoulder[score] > minScore && nose[score] > minScore ) {
 
       ctx.save();
       ctx.translate(rightHip[x], rightHip[y]);
