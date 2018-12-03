@@ -363,9 +363,10 @@ function detectPoseInRealTime(video, net) {
     var rightArm_h =   rightArmDist + rightArm_y_adj * 1.5;
 
     // ctx.drawImage(rightBiceps, rightArm_x, rightArm_y, rightArm_w, rightArm_h);
-     if(rightShoulder[score] > minScore && rightElbow[score] > minScore && leftShoulder[score] > minScore && nose[score] > minScore
-          && nose[score] > minScore) {
-    
+     if(rightHip[score] > minScore && leftHip[score] > minScore 
+        && leftShoulder[score] > minScore && leftElbow[score] > minScore 
+        && rightShoulder[score] > minScore && rightElbow[score] > minScore
+        && nose[score] > minScore) {
         console.log(" calculated angle " + rightArm_deg)
         ctx.save();    
         ctx.translate(rightShoulder[x], rightShoulder[y]);
@@ -399,7 +400,9 @@ function detectPoseInRealTime(video, net) {
 
     // ctx.drawImage(leftBiceps, leftArm_x, leftArm_y, leftArm_w, leftArm_h);
 
-    if(leftShoulder[score] > minScore && leftElbow[score] > minScore && rightShoulder[score] > minScore && nose[score] > minScore
+    if(rightHip[score] > minScore && leftHip[score] > minScore 
+        && leftShoulder[score] > minScore && leftElbow[score] > minScore 
+        && rightShoulder[score] > minScore && rightElbow[score] > minScore
         && nose[score] > minScore) {
 
         console.log(" calculated angle " + leftArm_deg)
@@ -463,9 +466,12 @@ function detectPoseInRealTime(video, net) {
     var tee_h = rightHip[y] - rightShoulder[y] + tee_y_adj ;
     var tee_y =  rightShoulder[y]  - tee_y_adj; 
   
-    if(rightHip[score] > minScore && leftHip[score] > minScore && rightShoulder[score] > minScore && leftShoulder[score] > minScore  ) 
+   if(rightHip[score] > minScore && leftHip[score] > minScore 
+        && leftShoulder[score] > minScore && leftElbow[score] > minScore 
+        && rightShoulder[score] > minScore && rightElbow[score] > minScore
+        && nose[score] > minScore) {
         ctx.drawImage(tee, tee_x, tee_y *1.05, tee_w, tee_h);
-
+   }
 
     if(rightHip[score] > minScore && leftHip[score] > minScore && rightKnee[score] > minScore && leftKnee[score] > minScore 
         && rightShoulder[score] > minScore && leftShoulder[score] > minScore && nose[score] > minScore ) {
