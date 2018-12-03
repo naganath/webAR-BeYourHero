@@ -368,6 +368,8 @@ function detectPoseInRealTime(video, net) {
     const y = 'y';
     const x = 'x';
     const score = 'score';
+
+    var isHeadNeeded = 0;
     
 
     var shoulder_y_mid = (leftShoulder['y'] + rightShoulder['y'])/2;
@@ -515,6 +517,7 @@ function detectPoseInRealTime(video, net) {
         && rightShoulder[score] > minScore && rightElbow[score] > minScore
         && nose[score] > minScore) {
         ctx.drawImage(tee, tee_x, tee_y *1.05, tee_w, tee_h);
+        isHeadNeeded++;
    }
 
     if(rightHip[score] > minScore && leftHip[score] > minScore && rightKnee[score] > minScore && leftKnee[score] > minScore 
@@ -532,6 +535,7 @@ function detectPoseInRealTime(video, net) {
       ctx.rotate((leftPant_deg-90)*Math.PI/180);
       ctx.drawImage(leftPant, leftPant_x - leftHip[x], leftPant_y - leftHip[y], leftPant_w, leftPant_h);
       ctx.restore();
+      isHeadNeeded++;
 
     }
     /*
@@ -579,7 +583,9 @@ function detectPoseInRealTime(video, net) {
 
 
 
-    if(nose[score] > minScore && leftEye[score] > minScore && leftEar[score] > minScore && rightEye[score] > minScore && rightEye[score] > minScore ) {
+    if(  isHeadNeeded != 2 &&  nose[score] > minScore 
+      && leftEye[score] > minScore && leftEar[score] > minScore 
+      && rightEye[score] > minScore && rightEye[score] > minScore ) {
       ctx.save();
       ctx.translate(neck[x], neck[y]);
       ctx.rotate(head_deg*Math.PI/180);
