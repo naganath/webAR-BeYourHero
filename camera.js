@@ -32,8 +32,15 @@ var rightBiceps = new Image();
 var rightPant = new Image();
 var leftPant = new Image();
 
+var costumeParams = undefined;
+//-------------------------------- COSTUME 2 Parameters  -----------------------------------------------
+var costume_2 = {
+  "hat_x_factor" : 3.5
+};
 
-//------------------------------------------------------------------------
+
+//-------------------------------- COSTUME 3 Parameters  -----------------------------------------------
+
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
 }
@@ -113,7 +120,7 @@ const guiState = {
 
 function loadImages() {
   hat.src = "img/1/hat.png";
-  mask.src = "img/1/mask-1.png";
+  mask.src = "img/1/mask.png";
   tee.src = "img/1/shirt-1.png";
   leftBiceps.src = "img/1/leftArm.png";
   rightBiceps.src = "img/1/rightArm.png"; 
@@ -313,6 +320,7 @@ function detectPoseInRealTime(video, net) {
  
     const y = 'y';
     const x = 'x';
+    
 
     var shoulder_y_mid = (leftShoulder['y'] + rightShoulder['y'])/2;
     var neck = {
@@ -337,7 +345,7 @@ function detectPoseInRealTime(video, net) {
     var rightArm_deg =  Math.atan(rightArm_slope) *180/Math.PI;
     var rightArm_degDelta = (rightArm_deg / -6) ; 
 
-    if((rightArm_deg < 0)) 
+    if((rightArm_deg > 0)) 
         rightArm_degDelta = rightArm_deg/2;
 
 
@@ -358,7 +366,7 @@ function detectPoseInRealTime(video, net) {
     console.log(" calculated angle " + rightArm_deg)
     ctx.save();    
     ctx.translate(rightShoulder[x], rightShoulder[y]);
-    ctx.rotate(((rightArm_deg + 90) + rightArm_degDelta)*Math.PI/180);
+    ctx.rotate(((rightArm_deg + 90) - rightArm_degDelta)*Math.PI/180);
     ctx.drawImage(rightBiceps, rightArm_x - rightShoulder[x] , rightArm_y - rightShoulder[y], -rightArm_w, rightArm_h);
     ctx.restore();
  
@@ -470,7 +478,7 @@ function detectPoseInRealTime(video, net) {
     ####################################    Draw MASK    ####################################
     */
     
-    var mask_x_factor = 0.25;
+    var mask_x_factor = 0.75;
     var mask_y_factor = 0;
     var mask_x_adjustment = ( righteye_x - rightear_x ) * mask_x_factor;
     var mask_y_adjustment = ( nose_y - (righteye_y  + lefteye_y)/2   ) * mask_y_factor;
@@ -491,18 +499,23 @@ function detectPoseInRealTime(video, net) {
     */
 
     var factor = hat.height/hat.width;
-    var theme1_hat_x_factor = 2;
-    var theme1_hat_y_factor = 0.75;
+    var hat_x_factor = 2.5;
+    var hat_y_factor = 0;
 
     var head_slope =(lefteye_y - righteye_y)/ (lefteye_x - righteye_x)  ;
     var head_deg = Math.atan(head_slope) *180/Math.PI;
 
     var hat_adj_x = ( (righteye_x - rightear_x) + (leftear_x  - lefteye_x) ) /2;
     var hat_adj_x = ( (nose_x - righteye_x) + (lefteye_x - nose_x) ) /2;
-    var hat_x = rightear_x - hat_adj_x * theme1_hat_x_factor;
-    var hat_w =   leftear_x -hat_x + hat_adj_x * theme1_hat_x_factor;
+    if(costumeParams != undefined) {
+      hat_x_factor = costumeParams["hat_x_factor"] ;
+    }
+
+
+    var hat_x = rightear_x - hat_adj_x * hat_x_factor;
+    var hat_w =   leftear_x -hat_x + hat_adj_x * hat_x_factor;
     var hat_h = hat_w * factor;
-    var hat_y = righteye_y-(theme1_hat_y_factor* (nose_y - righteye_y) + hat_h) ; 
+    var hat_y = righteye_y-(hat_y_factor* (nose_y - righteye_y) + hat_h) ; 
     
     // ---------------------------------------------------------------------------------------
 
@@ -550,9 +563,28 @@ function detectPoseInRealTime(video, net) {
  * camera devices, and setting off the detectPoseInRealTime function.
  */
 $(".costume").click(function(){
-var number = $(this).attr("data-id");
-hat.src = 'img/'+number+'/hat.png';
-console.log("success");
+  var number = $(this).attr("data-id");
+  hat.src = 'img/'+number+'/hat.png';
+  tee.src = 'img/'+number +'/shirt-1.png';
+  leftBiceps.src = 'img/' + number + '/leftArm.png';
+  rightBiceps.src = 'img/' + number + '/rightArm.png'; 
+  mask.src = 'img/' + number + '/mask.png'; 
+  rightPant.src = 'img/' + number + '/rightPant.png'; 
+  leftPant.src = 'img/' + number + '/leftPant.png'; 
+
+  
+  console.log("success");
+  if(number == 1 ) {
+    costumeParams = undefined;
+  }
+  if(number == 2) {
+    costumeParams = costume_2;
+  } else if( number == 3) {
+    costumeParams = costume_3;
+  }
+
+
+
 });
 
 
