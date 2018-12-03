@@ -31,7 +31,7 @@ var leftBiceps = new Image();
 var rightBiceps = new Image();
 var rightPant = new Image();
 var leftPant = new Image();
-const minScore = 0.35;
+const minScore = 0.50;
 var costumeParams = undefined;
 //-------------------------------- COSTUME 2 Parameters  -----------------------------------------------
 var costume_2 = {
@@ -46,6 +46,7 @@ var costume_3 = {
   "hat_x_factor" : 2
 }
 
+var timeMap = new Map();
 
 //-------------------------------- COSTUME 3 Parameters  -----------------------------------------------
 
@@ -266,7 +267,7 @@ function detectPoseInRealTime(video, net) {
       case 'single-pose':
         const pose = await guiState.net.estimateSinglePose(video, imageScaleFactor, flipHorizontal, outputStride);
         poses.push(pose);
-        console.log(pose);
+        // console.log(pose);
 
         var values = pose['keypoints'];
 
@@ -295,6 +296,9 @@ function detectPoseInRealTime(video, net) {
 
         var leftKnee = position["leftKnee"];
         var rightKnee = position["rightKnee"];    
+
+        var rightWrist = position["rightWrist"];
+        var leftWrist = position["leftWrist"];
 
         minPoseConfidence = Number(
           guiState.singlePoseDetection.minPoseConfidence);
@@ -367,7 +371,7 @@ function detectPoseInRealTime(video, net) {
         && leftShoulder[score] > minScore && leftElbow[score] > minScore 
         && rightShoulder[score] > minScore && rightElbow[score] > minScore
         && nose[score] > minScore) {
-        console.log(" calculated angle " + rightArm_deg)
+        // console.log(" calculated angle " + rightArm_deg)
         ctx.save();    
         ctx.translate(rightShoulder[x], rightShoulder[y]);
         ctx.rotate(((rightArm_deg + 90) - rightArm_degDelta)*Math.PI/180);
@@ -405,7 +409,7 @@ function detectPoseInRealTime(video, net) {
         && rightShoulder[score] > minScore && rightElbow[score] > minScore
         && nose[score] > minScore) {
 
-        console.log(" calculated angle " + leftArm_deg)
+        // console.log(" calculated angle " + leftArm_deg)
         ctx.save();    
         ctx.translate(leftShoulder[x], leftShoulder[y]);
         ctx.rotate(((leftArm_deg - 90) + leftArm_degDelta)*Math.PI/180);
@@ -503,11 +507,6 @@ function detectPoseInRealTime(video, net) {
     var mask_w = leftEar[x] - mask_x + mask_x_adjustment;
     var mask_h = mask_w * mask_ratio;
     var mask_y = nose[y] -  ( mask_h + mask_y_adjustment) ;
-    // todo give angle to eye mask like hat. 
-    // ---------------------------------------------------------------------------------------
-
-    
-
 
 
     /*
@@ -551,9 +550,106 @@ function detectPoseInRealTime(video, net) {
 
 
     /*
+##################################  GESTURES  ##########################################################
+
+    */
+      var d = new Date();
+      var curTimeIn10Millis = Math.trunc(d.getTime() / 10);
+      timeMap.set(curTimeIn10Millis, position);
+      var oldPosition = timeMap.get(curTimeIn10Millis - 100  );
+
+      // Gesture 1 rightEar -- rightWrist
+      var isGesture1 = false;
+      var isGesture2 = false;
+      var isGesture3 = false;
+      var isGesture4 = false;
+      var isGesture5 = false;
+      var isGestureSet = false;
+      if(oldPosition != undefined) {
+            var old_rightEar = oldPosition["rightEar"];
+            var old_leftEar = oldPosition["leftEar"];
+
+            var old_rightWrist = oldPosition["rightWrist"];
+            var old_leftWrist = oldPosition["leftWrist"];
+
+            var old_rightElbow = oldPosition["rightElbow"];
+            var old_leftElbow = oldPosition["leftElbow"];
+
+            var old_rightShoulder = oldPosition["rightShoulder"];
+            var old_leftShoulder = oldPosition["leftShoulder"];
+
+
+            if(old_rightWrist[score] > minScore && old_rightEar[score] > minScore 
+               &&  rightWrist[score] > minScore && rightEar[score] > minScore) {
+              isGesture1 = old_rightEar[y] > old_rightWrist[y] && rightEar[y] > rightWrist[y];
+              isGestureSet = isGesture1 == true;
+            console.log("var isGesture1 Gesture 1 is : " + isGesture1);
+            }
+
+
+            if(old_rightWrist[score] > minScore && old_rightShoulder[score] > minScore 
+               &&  rightWrist[score] > minScore && rightShoulder[score] > minScore  && !isGestureSet ) {
+
+                    isGesture2 = old_rightWrist[y] < old_rightShoulder[y]
+                                 && rightWrist[y] < rightShoulder[y];
+                    isGestureSet = isGesture2 == true;
+
+                    console.log("var isGesture2 Gesture 2 is : " + isGesture2);
+             }
+
+
+             if(old_leftWrist[score] > minScore && old_leftEar[score] > minScore 
+               &&  leftWrist[score] > minScore &&     leftEar[score] > minScore && !isGestureSet) {
+
+                    isGesture4 = old_leftWrist[y] < old_leftEar[y]
+                                 && leftWrist[y] < leftEar[y];
+                    isGestureSet = isGesture4 == true;
+
+                    console.log("var isGesture4 Gesture 4 is : " + isGesture4);
+             }
+
+
+            if(old_leftWrist[score] > minScore && old_leftShoulder[score] > minScore 
+               &&  leftWrist[score] > minScore &&     leftShoulder[score] > minScore && !isGestureSet) {
+
+                    isGesture3 = old_leftWrist[y] < old_leftShoulder[y]
+                                 && leftWrist[y] < leftShoulder[y];
+                    isGestureSet = isGesture3 == true;
+                    console.log("var isGesture3 Gesture 3 is : " + isGesture3);
+             }
+
+
+           
+
+             if(old_leftElbow[score] > minScore && old_rightElbow[score] > minScore 
+              && leftElbow[score] > minScore && rightElbow[score] > minScore 
+              && old_leftWrist[score] > minScore && old_rightWrist[score] > minScore
+              && leftWrist[score] > minScore && rightWrist[score] > minScore && !isGestureSet) {
+
+                isGesture5 = old_leftWrist[y] < old_leftElbow[y] && old_rightWrist[y] < old_rightElbow[y] 
+                            && leftWrist[y] < leftElbow[y] && rightWrist[y] < rightElbow[y]  ;
+                isGestureSet = isGesture5 == true;
+                    console.log("var isGesture5 Gesture 5 is : " + isGesture5);
+
+             }
+
+       }
+
+
+
+
+
+
+      // delete old Keys.
+      timeMap.delete(curTimeIn10Millis-200);
+
+
+
+    /*
 ############################################################################################
 
     */
+
 
     const scale = canvasSize / video.width;
 
@@ -595,7 +691,7 @@ $(".costume").click(function(){
   leftPant.src = 'img/' + number + '/leftPant.png'; 
 
   
-  console.log("success");
+  // console.log("success");
   if(number == 1 ) {
     costumeParams = undefined;
   }
