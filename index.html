@@ -65,7 +65,6 @@
 }
 
 .main {
-    margin-left: 160px; /* Same as the width of the sidenav */
     font-size: 28px; /* Increased text to enable scrolling */
     padding: 0px 10px;
 }
@@ -77,14 +76,60 @@
 }
 .recording,audio
 {
-    display: none; 
+    display: none !important; 
 }
+
 @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
     .sidenav a {font-size: 18px;}
 }
+.rain-bg
+{   
+    margin: 0 auto;
+    width: 900px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 900px;
+    background:url('/posenet/img/rain.gif') repeat center center;
+    background-size: 100% auto;
+}
 
+.tree-bg
+{
+    margin: 0 auto;
+    width: 900px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 900px;
+    background:url('/posenet/img/tree.gif') repeat center center;
+}
 
+.girl-bg
+{   
+    margin: 0 auto;
+    width: 900px;
+    position: absolute;
+    left: 0;
+    height: 500px;
+    background: url(/posenet/img/girl.gif) no-repeat center center;
+}
+
+.hide
+{
+    display: none;
+}
+
+.video-div
+{
+    margin: 0 auto;
+    text-align: left;
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 900px;
+}
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -100,15 +145,26 @@
 
     <div class="sidenav">
       <h3> WebAR - Be Your Own Hero </h3>
-      <a data-id='1' class="costume">Costume 1</a>
-      <a data-id='2' class="costume">Costume 2</a>
-      <a data-id='3' class="costume">Costume 3</a>
+      <a data-id='1' class="costume costume-1">Costume 1</a>
+      <a data-id='2' class="costume costume-2">Costume 2</a>
+      <a data-id='3' class="costume costume-3">Costume 3</a>
       <a class="record-gif">Create GIF and Download</a>
       <h5 class="recording">Recording...</h5> 
-
     </div>
 
+
     <div class="main">
+
+        <div class="rain-bg hide"></div>
+        <div class="tree-bg hide"></div>
+        <div class="girl-bg hide"></div>
+
+        <div class="video-div hide">
+            <video id="myvideo" width="400" height="300">
+             <source src="/posenet/video/video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
 
         <div id="loading">
             Loading the camera..Please wait
@@ -125,10 +181,10 @@
             <canvas id="output" />
         </div>
 
-        <audio class="sound" controls>
-          <source src="/posenet/audio/audio.mp3" type="audio/mpeg">
+        <audio id="myaudio" autoplay="autoplay" controls="controls">
+            <source src="/posenet/audio/audio.mp3" type="audio/mpeg">
         </audio>
-
+        
     </div>
 
 
@@ -143,7 +199,44 @@
     <script src="gestures.js"></script>
 
 
-    <script type="text/javascript">
+    <script type="text/javascript"> 
+
+         //  jQuery(".video-div").removeClass("hide"); 
+          // jQuery("body").find('#myvideo').get(0).play();
+          
+           // jQuery(".video-div").addClass("hide"); 
+           // jQuery("body").find('#myvideo').get(0).pause();
+
+      //  jQuery(".girl-bg").removeClass('hide');
+       // jQuery(".girl-bg").animate({left: '500px'} ,{duration:3500});
+        
+        // jQuery(".girl-bg").addClass('hide');
+        // jQuery(".girl-bg").animate({left: '0px'});
+
+            // var theme = Math.floor(Math.random() * 3);
+            // theme+=1;
+            // alert(theme);
+            // jQuery(".costume-"+theme).click();    
+
+
+            // hat.src = '';
+            // mask.src = '';
+            // tee.src = '';
+            // leftBiceps.src = '';
+            // rightBiceps.src = ''; 
+            // rightPant.src = '';
+            // leftPant.src = '';
+
+            //jQuery(".tree-bg").addClass('hide');
+            //jQuery(".rain-bg").addClass('hide');
+
+     jQuery(".costume").click(function(){
+        jQuery("body").find('#myaudio').get(0).play();
+        jQuery("body").find('#myaudio').get(0).pause();
+        jQuery("body").find('#myvideo').get(0).play();
+        jQuery("body").find('#myvideo').get(0).pause();
+     });
+   
         
 $(".record-gif").click(function(event) {
     
@@ -193,7 +286,6 @@ $(".record-gif").click(function(event) {
     }, interval);
 
 });
-
 
     </script>
         

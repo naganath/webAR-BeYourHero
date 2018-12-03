@@ -31,7 +31,10 @@ var leftBiceps = new Image();
 var rightBiceps = new Image();
 var rightPant = new Image();
 var leftPant = new Image();
-
+var sound = new Image();
+var tree = new Image();
+var rain = new Image();
+var rain_src = new Image();
 
 //------------------------------------------------------------------------
 function isAndroid() {
@@ -119,7 +122,6 @@ function loadImages() {
   rightBiceps.src = "img/1/rightArm.png"; 
   rightPant.src = "img/1/rightPant.png";
   leftPant.src = "img/1/leftPant.png";
-
 
 }
 
@@ -220,7 +222,11 @@ function detectPoseInRealTime(video, net) {
   const flipHorizontal = true; // since images are being fed from a webcam
 
   var position = [];
-  loadImages();
+  sound.src = "img/sound.png";
+  rain.src ="img/rain.png";
+  tree.src = "img/tree.png";
+  rain_src.src = "img/rain.gif";
+
 
   canvas.width = canvasSize;
   canvas.height = canvasSize;
@@ -252,7 +258,7 @@ function detectPoseInRealTime(video, net) {
       case 'single-pose':
         const pose = await guiState.net.estimateSinglePose(video, imageScaleFactor, flipHorizontal, outputStride);
         poses.push(pose);
-        console.log(pose);
+        // console.log(pose);
 
         var values = pose['keypoints'];
 
@@ -287,7 +293,14 @@ function detectPoseInRealTime(video, net) {
         var rightElbow = position['rightElbow'];    
 
         var leftKnee = position["leftKnee"];
-        var rightKnee = position["rightKnee"];    
+        var rightKnee = position["rightKnee"]; 
+
+        var rightwrist_x = position['rightWrist']['x'];
+        var rightwrist_y = position['rightWrist']['y'];
+
+        var leftwrist_x = position['leftWrist']['x'];
+        var leftwrist_y = position['leftWrist']['y'];   
+
 
         minPoseConfidence = Number(
           guiState.singlePoseDetection.minPoseConfidence);
@@ -306,6 +319,35 @@ function detectPoseInRealTime(video, net) {
       ctx.drawImage(video, 0, 0, canvasSize, canvasSize);
       ctx.restore();
     }
+
+    //draw canvas button images 
+
+    ctx.drawImage(sound, 5, 150, 25, 25);
+    ctx.drawImage(rain, 35, 150, 25, 25);
+    ctx.drawImage(tree, 70, 150, 25, 25);
+
+
+    console.log(rightwrist_x+'---'+rightwrist_y);
+
+    if( (rightwrist_x > 0 && rightwrist_x < 28) && (rightwrist_y > 149 && rightwrist_y < 170) )
+    {
+        jQuery("body").find('#myaudio').get(0).play();
+    } 
+
+    if( (rightwrist_x > 30 && rightwrist_x < 65) && (rightwrist_y > 149 && rightwrist_y < 170) )
+    {
+      jQuery(".rain-bg").removeClass('hide');
+      jQuery(".tree-bg").addClass('hide');
+    }
+
+    if( (rightwrist_x > 70 && rightwrist_x < 105) && (rightwrist_y > 149 && rightwrist_y < 170) )
+    {
+      jQuery(".tree-bg").removeClass('hide');
+      jQuery(".rain-bg").addClass('hide');
+    }
+
+    //draw canvas button images end
+
 
    /*
     ####################################    Common Variables    ####################################
@@ -355,7 +397,7 @@ function detectPoseInRealTime(video, net) {
 
     // ctx.drawImage(rightBiceps, rightArm_x, rightArm_y, rightArm_w, rightArm_h);
 
-    console.log(" calculated angle " + rightArm_deg)
+    // console.log(" calculated angle " + rightArm_deg)
     ctx.save();    
     ctx.translate(rightShoulder[x], rightShoulder[y]);
     ctx.rotate(((rightArm_deg + 90) + rightArm_degDelta)*Math.PI/180);
@@ -388,7 +430,7 @@ function detectPoseInRealTime(video, net) {
     // ctx.drawImage(leftBiceps, leftArm_x, leftArm_y, leftArm_w, leftArm_h);
 
 
-    console.log(" calculated angle " + leftArm_deg)
+    // console.log(" calculated angle " + leftArm_deg)
     ctx.save();    
     ctx.translate(leftShoulder[x], leftShoulder[y]);
     ctx.rotate(((leftArm_deg - 90) + leftArm_degDelta)*Math.PI/180);
@@ -543,6 +585,7 @@ function detectPoseInRealTime(video, net) {
   }
 
   poseDetectionFrame();
+
 }
 
 /**
@@ -551,8 +594,13 @@ function detectPoseInRealTime(video, net) {
  */
 $(".costume").click(function(){
 var number = $(this).attr("data-id");
-hat.src = 'img/'+number+'/hat.png';
-console.log("success");
+  hat.src = 'img/'+number+'/hat.png';
+  mask.src = 'img/'+number+'/mask-1.png';
+  tee.src = 'img/'+number+'/shirt-1.png';
+  leftBiceps.src = 'img/'+number+'/leftArm.png';
+  rightBiceps.src = 'img/'+number+'/rightArm.png'; 
+  rightPant.src = 'img/'+number+'/rightPant.png';
+  leftPant.src = 'img/'+number+'/leftPant.png';
 });
 
 
