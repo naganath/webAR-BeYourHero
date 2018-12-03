@@ -35,8 +35,10 @@ var sound = new Image();
 var tree = new Image();
 var rain = new Image();
 var rain_src = new Image();
+var face_mask = new Image();
 const minScore = 0.50;
 var costumeParams = undefined;
+
 //-------------------------------- COSTUME 2 Parameters  -----------------------------------------------
 var costume_2 = {
   "hat_x_factor" : 1,
@@ -582,17 +584,34 @@ function detectPoseInRealTime(video, net) {
     // ---------------------------------------------------------------------------------------
 
 
+      if(isHeadNeeded != 2) {
+              if( nose[score] > minScore 
+                && leftEye[score] > minScore && leftEar[score] > minScore 
+                && rightEye[score] > minScore && rightEye[score] > minScore ) {
+                ctx.save();
+                ctx.translate(neck[x], neck[y]);
+                ctx.rotate(head_deg*Math.PI/180);
+                ctx.drawImage(mask, mask_x - neck[x], mask_y  - neck[y], mask_w, mask_h);
+                ctx.drawImage(hat, hat_x - neck[x], hat_y - neck[y], hat_w, hat_h);
+                ctx.restore();
+              } 
+      }else {
+      //draw face mask. 
+        var facemask_x =  rightEye[x] - hat_adj_x;
+        var facemask_w = leftEar[x] -  rightEye[x] + hat_adj_x;
+        var facemask_h =  ( neck[y] - (leftEar[y] + rightEar[y]) /2) * 2;
+        var facemask_y = neck[y] - facemask_h;
 
-    if(  isHeadNeeded != 2 &&  nose[score] > minScore 
-      && leftEye[score] > minScore && leftEar[score] > minScore 
-      && rightEye[score] > minScore && rightEye[score] > minScore ) {
-      ctx.save();
-      ctx.translate(neck[x], neck[y]);
-      ctx.rotate(head_deg*Math.PI/180);
-      ctx.drawImage(mask, mask_x - neck[x], mask_y  - neck[y], mask_w, mask_h);
-      ctx.drawImage(hat, hat_x - neck[x], hat_y - neck[y], hat_w, hat_h);
-      ctx.restore();
-    } 
+        ctx.save();
+        ctx.translate(neck[x], neck[y]);
+        ctx.rotate(head_deg*Math.PI/180);
+        // ctx.drawImage(mask, mask_x - neck[x], mask_y  - neck[y], mask_w, mask_h);
+        ctx.drawImage(face_mask, facemask_x - neck[x], facemask_y - neck[y], facemask_w, facemask_h);
+        ctx.restore();
+
+
+
+    }
 
 
     /*
@@ -796,6 +815,7 @@ $(".costume").click(function(){
   mask.src = 'img/' + number + '/mask.png'; 
   rightPant.src = 'img/' + number + '/rightPant.png'; 
   leftPant.src = 'img/' + number + '/leftPant.png'; 
+  face_mask.src = 'img/' + number + '/facemask.png'; 
   
   // console.log("success");
   if(number == 1 ) {
