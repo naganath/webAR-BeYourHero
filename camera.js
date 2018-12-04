@@ -661,6 +661,11 @@ function detectPoseInRealTime(video, net) {
 
                     isGesture2 = old_rightWrist[y] < old_rightShoulder[y]
                                  && rightWrist[y] < rightShoulder[y];
+
+                    isGesture2 = isGesture2 
+                                && old_rightWrist[y] > old_rightEar[y]
+                                 && rightWrist[y] > rightEar[y];
+
                     isGestureSet = isGesture2 == true;
 
                     console.log("var isGesture2 Gesture 2 is : " + isGesture2);
@@ -683,6 +688,9 @@ function detectPoseInRealTime(video, net) {
 
                     isGesture3 = old_leftWrist[y] < old_leftShoulder[y]
                                  && leftWrist[y] < leftShoulder[y];
+                    isGesture3 = isGesture3 && 
+                                  old_leftWrist[y] > old_leftEar[y]
+                                 && leftWrist[y] > leftEar[y];
                     isGestureSet = isGesture3 == true;
                     console.log("var isGesture3 Gesture 3 is : " + isGesture3);
              }
@@ -697,6 +705,15 @@ function detectPoseInRealTime(video, net) {
 
                 isGesture5 = old_leftWrist[y] < old_leftElbow[y] && old_rightWrist[y] < old_rightElbow[y] 
                             && leftWrist[y] < leftElbow[y] && rightWrist[y] < rightElbow[y]  ;
+
+                isGesture5 = isGesture5 && 
+                            old_leftWrist[x] < old_leftElbow[x] && old_rightWrist[x] > old_rightElbow[x] 
+                            && leftWrist[x] < leftElbow[x] && rightWrist[x] > rightElbow[x]  ;
+
+                isGesture5 = isGesture5 && 
+                              old_leftWrist[y] > old_leftShoulder[y] && old_rightWrist[y] > old_rightShoulder[y] 
+                            && leftWrist[y] > leftShoulder[y] && rightWrist[y] > rightShoulder[y]  ;   
+
                 isGestureSet = isGesture5 == true;
                     console.log("var isGesture5 Gesture 5 is : " + isGesture5);
 
